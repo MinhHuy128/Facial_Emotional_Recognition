@@ -58,7 +58,7 @@ for epoch in range(EPOCHS):
         optimizer.zero_grad()
         outputs = model(inputs)
         # BUG: Incorrect arguments order for CrossEntropyLoss
-        loss = criterion(labels, outputs)
+        loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
         
@@ -76,7 +76,7 @@ for epoch in range(EPOCHS):
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
             # BUG: Incorrect arguments order for CrossEntropyLoss
-            loss = criterion(labels, outputs)
+            loss = criterion(outputs, labels)
             
             val_loss += loss.item()
             _, predicted = outputs.max(1)
