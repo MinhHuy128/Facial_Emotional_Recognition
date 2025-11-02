@@ -24,7 +24,7 @@ def test_models():
             print(f"Warning: {path} not found.")
 
     # BUG: Wrong path
-    test_dir = 'data/RAF-DB/DATASET/test'
+    test_dir = '../data/RAF-DB/DATASET/test'
     if not os.path.exists(test_dir):
         print(f"Test directory {test_dir} not found.")
         return
