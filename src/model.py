@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torchvision import models
 
 class LightweightEmotionCNN(nn.Module):
     def __init__(self, num_classes=7):
@@ -54,3 +55,37 @@ class LightweightEmotionCNN(nn.Module):
     def forward(self, x):
         x = self.features(x)
         return self.classifier(x)
+
+class EdgeEmotionMobileNet(nn.Module):
+    def __init__(self, num_classes=7):
+        super(EdgeEmotionMobileNet, self).__init__()
+        self.mobilenet = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.DEFAULT)
+        in_features = self.mobilenet.classifier[1].in_features
+        self.mobilenet.classifier = nn.Sequential(
+            nn.Dropout(p=0.5),
+            nn.Linear(in_features, 512),
+            nn.BatchNorm1d(512),
+            nn.ReLU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(512, num_classes)
+        )
+
+    def forward(self, x):
+        return self.mobilenet(x)
+
+class HeavyEmotionResNet(nn.Module):
+    def __init__(self, num_classes=7):
+        super(HeavyEmotionResNet, self).__init__()
+        self.resnet = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+        in_features = self.resnet.fc.in_features
+        self.resnet.fc = nn.Sequential(
+            nn.Dropout(p=0.5),
+            nn.Linear(in_features, 512),
+            nn.BatchNorm1d(512),
+            nn.ReLU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(512, num_classes)
+        )
+
+    def forward(self, x):
+        return self.resnet(x)

@@ -3,12 +3,12 @@ import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
-from model import LightweightEmotionCNN
+from model import LightweightEmotionCNN, EdgeEmotionMobileNet, HeavyEmotionResNet
 import argparse
 import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default='vgg', choices=['vgg'])
+parser.add_argument('--model', type=str, required=True, choices=['vgg', 'mobilenet', 'resnet'])
 args = parser.parse_args()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -19,7 +19,12 @@ BATCH_SIZE = 64
 EPOCHS = 50
 
 os.makedirs('../models', exist_ok=True)
-BEST_MODEL_PATH = '../models/vgg_best.pth'
+if args.model == 'vgg':
+    BEST_MODEL_PATH = '../models/vgg_best.pth'
+elif args.model == 'mobilenet':
+    BEST_MODEL_PATH = '../models/mobilenet_best.pth'
+else:
+    BEST_MODEL_PATH = '../models/resnet_best.pth'
 
 train_transforms = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -42,7 +47,12 @@ val_dataset = datasets.ImageFolder(VAL_DIR, transform=val_transforms)
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
-model = LightweightEmotionCNN(num_classes=7).to(device)
+if args.model == 'vgg':
+    model = LightweightEmotionCNN(num_classes=7).to(device)
+elif args.model == 'mobilenet':
+    model = EdgeEmotionMobileNet(num_classes=7).to(device)
+else:
+    model = HeavyEmotionResNet(num_classes=7).to(device)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.AdamW(model.parameters(), lr=0.0005, weight_decay=1e-4) 
@@ -57,7 +67,6 @@ for epoch in range(EPOCHS):
         inputs, labels = inputs.to(device), labels.to(device)
         optimizer.zero_grad()
         outputs = model(inputs)
-        # BUG: Incorrect arguments order for CrossEntropyLoss
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
@@ -75,7 +84,6 @@ for epoch in range(EPOCHS):
         for inputs, labels in val_loader:
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
-            # BUG: Incorrect arguments order for CrossEntropyLoss
             loss = criterion(outputs, labels)
             
             val_loss += loss.item()

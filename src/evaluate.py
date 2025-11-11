@@ -8,7 +8,7 @@ import seaborn as sns
 import numpy as np
 import os
 import pandas as pd
-from model import LightweightEmotionCNN
+from model import LightweightEmotionCNN, EdgeEmotionMobileNet, HeavyEmotionResNet
 
 def evaluate_model(model, val_loader, device, model_name):
     print(f"Evaluating {model_name}...")
@@ -74,6 +74,20 @@ def main():
         results.append(evaluate_model(model_vgg, val_loader, device, "Custom Mini-VGG"))
     except Exception as e:
         print(f"Skipping VGG: {e}")
+
+    try:
+        model_mob = EdgeEmotionMobileNet(num_classes=7).to(device)
+        model_mob.load_state_dict(torch.load('../models/mobilenet_best.pth', map_location=device))
+        results.append(evaluate_model(model_mob, val_loader, device, "MobileNetV2"))
+    except Exception as e:
+        print(f"Skipping MobileNet: {e}")
+
+    try:
+        model_res = HeavyEmotionResNet(num_classes=7).to(device)
+        model_res.load_state_dict(torch.load('../models/resnet_best.pth', map_location=device))
+        results.append(evaluate_model(model_res, val_loader, device, "ResNet-50"))
+    except Exception as e:
+        print(f"Skipping ResNet: {e}")
 
     if results:
         df = pd.DataFrame(results)

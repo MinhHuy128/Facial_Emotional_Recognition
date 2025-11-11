@@ -3,7 +3,7 @@ import random
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-from model import LightweightEmotionCNN
+from model import LightweightEmotionCNN, EdgeEmotionMobileNet, HeavyEmotionResNet
 
 def test_models():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -13,6 +13,8 @@ def test_models():
 
     models = {
         "Mini-VGG": (LightweightEmotionCNN(num_classes=7), '../models/vgg_best.pth', True),
+        "MobileNetV2": (EdgeEmotionMobileNet(num_classes=7), '../models/mobilenet_best.pth', True),
+        "ResNet-50": (HeavyEmotionResNet(num_classes=7), '../models/resnet_best.pth', True)
     }
 
     for name, (model, path, is_rgb) in models.items():
@@ -23,7 +25,6 @@ def test_models():
         else:
             print(f"Warning: {path} not found.")
 
-    # BUG: Wrong path
     test_dir = '../data/RAF-DB/DATASET/test'
     if not os.path.exists(test_dir):
         print(f"Test directory {test_dir} not found.")
