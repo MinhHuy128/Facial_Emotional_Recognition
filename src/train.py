@@ -11,6 +11,26 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, required=True, choices=['vgg', 'mobilenet', 'resnet'])
 args = parser.parse_args()
 
+class EarlyStopping:
+    def __init__(self, patience=5, min_delta=0):
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.best_loss = None
+        self.early_stop = False
+
+    def __call__(self, val_loss):
+        if self.best_loss is None:
+            self.best_loss = val_loss
+        elif val_loss > self.best_loss - self.min_delta:
+            self.counter += 1
+            print(f" -> Early Stopping Warning: {self.counter} / {self.patience}")
+            if self.counter >= self.patience:
+                self.early_stop = True
+        else:
+            self.best_loss = val_loss
+            # BUG: forgot self.counter = 0 here!
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 TRAIN_DIR = '../data/RAF-DB/DATASET/train' 
@@ -56,6 +76,8 @@ else:
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.AdamW(model.parameters(), lr=0.0005, weight_decay=1e-4) 
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=4)
+early_stopping = EarlyStopping(patience=10)
 
 best_val_loss = float('inf')
 
@@ -96,8 +118,15 @@ for epoch in range(EPOCHS):
     
     print(f"Epoch {epoch+1}/{EPOCHS} | Train Loss: {train_loss/len(train_loader):.4f} Acc: {train_acc:.2f}% | Val Loss: {val_loss_avg:.4f} Acc: {val_acc:.2f}%")
     
+    scheduler.step(val_loss_avg)
+    
     if val_loss_avg < best_val_loss:
         best_val_loss = val_loss_avg
         torch.save(model.state_dict(), BEST_MODEL_PATH)
+
+    early_stopping(val_loss_avg)
+    if early_stopping.early_stop:
+        print("Early Stopping has been activated")
+        break
 
 print("DONE")
