@@ -29,7 +29,7 @@ class EarlyStopping:
                 self.early_stop = True
         else:
             self.best_loss = val_loss
-            # BUG: forgot self.counter = 0 here!
+            self.counter = 0
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
