@@ -30,7 +30,7 @@ while True:
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # BUG: Too sensitive parameters
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=1)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
 
     for (x, y, w, h) in faces:
         roi_color = frame[y:y+h, x:x+w]
