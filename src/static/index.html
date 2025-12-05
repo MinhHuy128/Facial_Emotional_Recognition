@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Emotion Recognition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-animation">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <main class="glass-container">
+        <header>
+            <h1>Emotion AI</h1>
+            <p>Upload a face image to predict the emotion</p>
+        </header>
+
+        <section class="upload-section">
+            <div id="dropzone" class="dropzone">
+                <input type="file" id="file-input" accept="image/*" hidden>
+                <div class="upload-content" id="upload-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span>Drag & Drop image here or <span class="highlight">Browse</span></span>
+                </div>
+                <div id="preview-container" class="preview-container hidden">
+                    <img id="image-preview" src="" alt="Preview">
+                </div>
+            </div>
+        </section>
+
+        <section id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Analyzing facial expressions...</p>
+        </section>
+
+        <section id="result-section" class="result-section hidden">
+            <h2>Result</h2>
+            <div class="emotion-card">
+                <div class="emotion-emoji" id="emotion-emoji">😊</div>
+                <div class="emotion-details">
+                    <h3 id="emotion-name">Happy</h3>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidence-fill"></div>
+                    </div>
+                    <p id="confidence-text">98.5% Confidence</p>
+                </div>
+            </div>
+            <button id="reset-btn" class="btn-primary">Try Another Image</button>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
