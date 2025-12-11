@@ -5,11 +5,20 @@ import numpy as np
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 import torchvision.transforms as transforms
 from model import EdgeEmotionMobileNet
 
 app = FastAPI(title="Emotion Recognition API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_PATH = '../models/mobilenet_best.pth'
