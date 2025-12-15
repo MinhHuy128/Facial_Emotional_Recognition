@@ -1,0 +1,4 @@
+Model,Accuracy,Precision,Recall,F1-Score
+Custom Mini-VGG,76.53%,72.39%,62.88%,66.11%
+MobileNetV2,82.14%,77.27%,70.48%,72.49%
+ResNet-50,85.46%,77.80%,77.40%,77.55%
