@@ -1,11 +1,8 @@
 # Emotion Recognition Project
-
 This is my personal project for facial emotion recognition. I built this to learn about Deep Learning, PyTorch, and how to deploy a model using FastAPI and OpenCV. 
-
 It predicts 7 basic emotions: Happy, Sad, Angry, Surprise, Fear, Disgust, and Neutral.
 
 ## How to setup and run
-
 ### 1. Create virtual environment
 First, you need to create a python virtual environment so it doesn't mess up your global python:
 
@@ -51,7 +48,6 @@ python app.py
 Then open your browser and go to `http://localhost:8000` to upload an image and test it.
 
 ---
-
 ## What I Learned
 Through this project, I learned a lot of new things:
 - How to build a Convolutional Neural Network (CNN) from scratch.
@@ -59,26 +55,38 @@ Through this project, I learned a lot of new things:
 - How to use OpenCV to detect faces in an image/webcam using Haar Cascades.
 - How to build a simple backend API using FastAPI to serve my deep learning model.
 - How to handle data transformations and write training loops in PyTorch.
+## Model Evaluation & Comparison
 
-## Pros and Cons of the Models
+We evaluated and compared the three models across multiple metrics (Accuracy, Precision, Recall, F1-Score) and summarized their performance, pros, and cons below:
 
-I tested 3 models for this project:
+| Model | Accuracy | Precision | Recall | F1-Score | Pros | Cons |
+| :--- | :---: | :---: | :---: | :---: | :--- | :--- |
+| **Custom Mini-VGG** | 76.53% | 72.39% | 62.88% | 66.11% | Easy to code, small, fast to train. Good for learning the basics. | Lowest accuracy, struggles with hard emotions like Disgust or Fear. |
+| **MobileNetV2** | 82.14% | 77.27% | 70.48% | 72.49% | Very lightweight and fast. **Best choice for real-time webcam** inference (no lag). | Not as accurate as heavier models. |
+| **ResNet-50** | **85.46%** | **77.80%** | **77.40%** | **77.55%** | **Highest accuracy**, excellent at extracting complex features. | Heavy and slow, demands high computational resources. |
 
-**1. My Custom Mini-VGG**
-- **Pros:** Easy to code, small, fast to train. Good for learning the basics.
-- **Cons:** Accuracy is the lowest (76.53%). It struggles with hard emotions like Disgust or Fear.
+### Confusion Matrices
 
-**2. MobileNetV2**
-- **Pros:** Very lightweight and very fast! It gave 82.14% accuracy. This is the best model for running real-time on webcam because it doesn't lag.
-- **Cons:** Not as accurate as heavier models.
+To analyze where each model struggles, we plotted confusion matrices:
 
-**3. ResNet-50**
-- **Pros:** Highest accuracy (85.46%). Very good at extracting features.
-- **Cons:** Very heavy and slow. My laptop heats up quickly when running this for a long time.
+| Custom Mini-VGG | MobileNetV2 | ResNet-50 |
+| :---: | :---: | :---: |
+| ![CM Mini-VGG](results/cm_Custom_Mini-VGG.png) | ![CM MobileNetV2](results/cm_MobileNetV2.png) | ![CM ResNet-50](results/cm_ResNet-50.png) |
 
-## Future Improvements
+---
+
+## Web App Test Run Examples
+
+Below are prediction examples from the web application interface:
+
+| Happy | Surprise |
+| :---: | :---: |
+| ![Web Happy](results/predictions/web_happy.png) | ![Web Surprise](results/predictions/web_surprise.png) |
+| **Sad** | **Angry** |
+| ![Web Sad](results/predictions/web_sad.png) | ![Web Angry](results/predictions/web_angry.png) |
+
 If I have more time, I want to improve this project by:
 - Using a better face detector like MTCNN or RetinaFace instead of OpenCV Haar Cascade, because Haar Cascade sometimes misses faces if the lighting is bad.
 - Trying out Vision Transformers (ViT) to see if it gets better accuracy.
 - Collecting more data for "Disgust" and "Fear" because the dataset is imbalanced.
-- Deploying the web app to a real server like AWS or Heroku so anyone can try it online.
+- Deploying the web app to a real server so anyone can try it online.
